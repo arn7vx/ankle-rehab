@@ -1,0 +1,13 @@
+{
+  "name": "Ankle Rehab — Return to Futsal",
+  "short_name": "Ankle Rehab",
+  "description": "Criteria-based ankle rehabilitation tracker and return-to-futsal planner.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#151a22",
+  "icons": [
+    {"src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}

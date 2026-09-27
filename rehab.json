@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "profile": {
+    "injuryDate": "2026-06-18",
+    "sport": "Futsal",
+    "injuredSide": "",
+    "injurySummary": "Partial tears reported on lateral and medial ankle ligaments",
+    "currentStage": "assessment"
+  },
+  "assessments": [],
+  "sessions": [],
+  "checkins": [],
+  "updatedAt": null
+}

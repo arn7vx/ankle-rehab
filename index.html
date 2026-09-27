@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#151a22" />
+  <meta name="description" content="Criteria-based ankle rehab tracker and return-to-futsal planner." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/app.css" />
+  <title>Ankle Rehab — Return to Futsal</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="brand-mark">↗</span><span>Ankle Rehab</span></div>
+      <div class="top-actions">
+        <button id="pullBtn" class="btn btn-ghost">↻ <span class="btn-text-mobile-hide">Pull latest</span></button>
+        <button id="settingsBtn" class="btn icon-btn" aria-label="Settings">⚙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Return to futsal</div>
+        <h1>Build the ankle back,<br/>then test the sport.</h1>
+        <p class="sub">A criteria-based rehab tracker for your reported partial medial + lateral ligament tears. Progress is based on symptoms, movement, strength, control, impact and sport exposure — not simply time since injury.</p>
+        <div class="hero-meta">
+          <span id="injuryAgeChip" class="chip">Injury date not set</span>
+          <span id="sideChip" class="chip">Side not set</span>
+          <span id="confidenceChip" class="chip">Confidence —</span>
+        </div>
+      </div>
+      <div class="hero-card sync-card">
+        <div>
+          <div class="eyebrow">GitHub sync</div>
+          <div class="sync-line"><span id="syncDot" class="dot"></span><span id="syncStatus">Local copy</span></div>
+          <p id="syncDetail" class="sub">Pulling latest public data…</p>
+        </div>
+        <button id="phoneSetupBtn" class="btn">Phone write setup</button>
+      </div>
+    </section>
+
+    <nav class="nav-pills" aria-label="Page sections">
+      <a href="#today">Today</a>
+      <a href="#assessment">Assessment</a>
+      <a href="#stages">Stages</a>
+      <a href="#progress">Progress</a>
+      <a href="#library">Exercises</a>
+      <a href="#report">ChatGPT report</a>
+    </nav>
+
+    <section id="redFlags" class="section alert alert-danger hidden">
+      <strong>Pause progression and seek an in-person medical assessment if you can.</strong>
+      <div id="redFlagText" style="margin-top:6px"></div>
+    </section>
+
+    <section id="today" class="section">
+      <div class="section-head"><div><div class="eyebrow">Today</div><h2>Your current work</h2></div></div>
+      <div class="panel today-card">
+        <div class="stage-banner">
+          <div><div id="todayStageTitle" class="stage-title">0 — Benchmark</div><div id="todayStageDesc" class="stage-desc">Complete your first assessment.</div></div>
+          <span id="stagePctChip" class="chip">0%</span>
+        </div>
+        <div class="progress-track"><div id="stageProgress" class="progress-fill"></div></div>
+        <div id="todayCriteria" class="criteria"></div>
+        <div id="todayExercises" class="exercise-list"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+          <button id="startSessionBtn" class="btn btn-primary">Start rehab session</button>
+          <a href="#assessment" class="btn" style="text-decoration:none">Reassess</a>
+        </div>
+        <p class="field-help" style="margin-bottom:0">Stage percentages are working targets, not medical clearance. Earlier-stage strength/mobility work can continue while later stages are introduced.</p>
+      </div>
+    </section>
+
+    <section id="assessment" class="section">
+      <div class="section-head"><div><div class="eyebrow">1 · Benchmark</div><h2>Assessment</h2><p>Compare the injured ankle with your healthy side. Only perform impact/sport tests once the earlier work is comfortable.</p></div></div>
+      <div class="panel">
+        <form id="assessmentForm">
+          <div class="form-section">
+            <h3>Profile + symptoms</h3>
+            <div class="form-grid">
+              <div class="field"><label>Assessment date</label><input id="assessDate" type="date" required /></div>
+              <div class="field"><label>Approx. injury date</label><input id="injuryDate" type="date" /></div>
+              <div class="field"><label>Injured side</label><select id="injuredSide"><option value="">Choose…</option><option>Left</option><option>Right</option></select></div>
+              <div class="field"><label>Walking pain (0–10)</label><input id="walkPain" type="number" min="0" max="10" step="1" /></div>
+              <div class="field"><label>Stairs pain (0–10)</label><input id="stairsPain" type="number" min="0" max="10" step="1" /></div>
+              <div class="field"><label>Swelling</label><select id="swelling"><option value="none">None</option><option value="mild">Mild / reactive</option><option value="significant">Significant</option></select></div>
+              <div class="field"><label>Giving way</label><select id="givingWay"><option value="no">No</option><option value="unsure">Unsure</option><option value="yes">Yes / repeated</option></select></div>
+              <div class="field"><label>Deep joint locking/catching?</label><select id="locking"><option value="no">No</option><option value="yes">Yes</option></select></div>
+              <div class="field"><label>Pain above the ankle with twisting?</label><select id="highPain"><option value="no">No</option><option value="yes">Yes</option></select></div>
+            </div>
+            <div class="field" style="margin-top:12px"><label>How normal does the ankle feel vs pre-injury?</label><div class="range-wrap"><input id="confidence" type="range" min="0" max="100" value="50" /><span id="confidenceOut" class="range-value">50%</span></div></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Mobility</h3>
+            <div class="field"><label>Knee-to-wall distance (cm)</label><div class="sidepair"><input id="ktwInjured" type="number" step="0.1" min="0" placeholder="Injured" /><input id="ktwHealthy" type="number" step="0.1" min="0" placeholder="Healthy" /></div><div class="field-help">Heel stays down; knee touches wall. Measure toe-to-wall distance.</div></div>
+          </div>
+
+          <div class="form-section">
+            <h3>Strength + control</h3>
+            <div class="form-grid">
+              <div class="field"><label>Single-leg calf raises</label><div class="sidepair"><input id="calfInjured" type="number" min="0" placeholder="Injured" /><input id="calfHealthy" type="number" min="0" placeholder="Healthy" /></div></div>
+              <div class="field"><label>Bent-knee calf raises</label><div class="sidepair"><input id="soleusInjured" type="number" min="0" placeholder="Injured" /><input id="soleusHealthy" type="number" min="0" placeholder="Healthy" /></div></div>
+              <div class="field"><label>Single-leg balance (sec)</label><div class="sidepair"><input id="balanceInjured" type="number" min="0" placeholder="Injured" /><input id="balanceHealthy" type="number" min="0" placeholder="Healthy" /></div></div>
+              <div class="field"><label>Step-down quality</label><select id="stepDown"><option value="">Not tested</option><option value="good">Controlled / comfortable</option><option value="minor">Minor wobble or ≤2/10 discomfort</option><option value="poor">Poor control / >2/10 pain</option><option value="unable">Unable</option></select></div>
+            </div>
+          </div>
+
+          <details class="form-section" id="advancedAssessment">
+            <summary style="font-weight:900;cursor:pointer">Advanced impact + return-to-sport tests</summary>
+            <p class="sub">Leave these blank until basic strength/control is comfortable. A missing advanced result does not count as failure — it simply keeps you at the earlier training stage.</p>
+            <div class="form-grid">
+              <div class="field"><label>30 sec single-leg pogo comfortable?</label><select id="pogo30"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>Impact next-day response</label><select id="impactNextDay"><option value="">Not tested</option><option value="normal">Normal / settled</option><option value="mild">Mild stiffness only</option><option value="flare">Clear flare / swelling</option></select></div>
+              <div class="field"><label>Forward hop symmetry (%)</label><input id="forwardHopSym" type="number" min="0" max="150" placeholder="e.g. 92" /></div>
+              <div class="field"><label>Lateral hop symmetry (%)</label><input id="lateralHopSym" type="number" min="0" max="150" placeholder="e.g. 90" /></div>
+              <div class="field"><label>Continuous running comfortable?</label><select id="runComfort"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>Hard braking comfortable?</label><select id="brakeComfort"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>45° cuts comfortable?</label><select id="cut45"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>90° cuts comfortable?</label><select id="cut90"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>Reactive cuts comfortable?</label><select id="reactiveCut"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>Ball work at speed comfortable?</label><select id="ballWork"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>Modified training completed?</label><select id="modifiedTraining"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>Full training completed?</label><select id="fullTraining"><option value="">Not tested</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+              <div class="field"><label>Number of full sessions tolerated</label><input id="fullTrainingCount" type="number" min="0" /></div>
+              <div class="field"><label>Next day after full training</label><select id="trainingNextDay"><option value="">Not tested</option><option value="normal">Normal / settled</option><option value="mild">Mild stiffness only</option><option value="flare">Clear flare / swelling</option></select></div>
+            </div>
+          </details>
+
+          <div class="field"><label>Notes</label><textarea id="assessmentNotes" rows="3" placeholder="Where pain is, what felt strange, anything you want future-you / ChatGPT to know…"></textarea></div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px"><button class="btn btn-accent" type="submit">Save assessment</button><span id="assessmentSaveNote" class="field-help" style="align-self:center"></span></div>
+        </form>
+      </div>
+    </section>
+
+    <section id="stages" class="section">
+      <div class="section-head"><div><div class="eyebrow">2 · Progression</div><h2>Rehab stages</h2><p>Think of these as overlapping capabilities, not sealed boxes.</p></div></div>
+      <div id="stageStrip" class="stage-strip"></div>
+      <div id="stageCards" class="grid grid-2" style="margin-top:14px"></div>
+      <div class="panel" style="margin-top:14px">
+        <div class="eyebrow">Final gate</div><h3>Return to game</h3>
+        <p class="sub">A match should not be the first time the ankle sees maximal speed, hard braking, reactive cutting, fatigue or ball pressure. The working return gate is: full-speed futsal movements tolerated, at least two full training exposures documented, no meaningful next-day flare, no giving-way, and confidence high enough that you are not protecting the ankle.</p>
+        <div class="alert alert-good">When those are met, the app marks you as a <strong>return-to-game candidate</strong> in the ChatGPT report — not “medically cleared.” The first match exposure should still be conservative rather than jumping straight into unrestricted minutes.</div>
+      </div>
+    </section>
+
+    <section id="progress" class="section">
+      <div class="section-head"><div><div class="eyebrow">Trends</div><h2>Progress</h2></div></div>
+      <div class="metric-row">
+        <div class="metric"><div id="metricSessions" class="value">0</div><div class="label">Sessions · 7d</div></div>
+        <div class="metric"><div id="metricCalf" class="value">—</div><div class="label">Calf symmetry</div></div>
+        <div class="metric"><div id="metricKtw" class="value">—</div><div class="label">Knee-wall symmetry</div></div>
+        <div class="metric"><div id="metricConfidence" class="value">—</div><div class="label">Confidence</div></div>
+      </div>
+      <div class="grid grid-2" style="margin-top:14px">
+        <div class="panel"><canvas id="calfChart"></canvas></div>
+        <div class="panel"><canvas id="confidenceChart"></canvas></div>
+      </div>
+      <div class="panel" style="margin-top:14px"><div class="section-head"><div><h3>Recent history</h3></div></div><div id="history"></div></div>
+    </section>
+
+    <section id="library" class="section">
+      <div class="section-head"><div><div class="eyebrow">Technique</div><h2>Exercise library</h2><p>Each card explains the purpose and execution. Videos are supporting demonstrations, not personalised assessment.</p></div></div>
+      <div id="exerciseLibrary" class="grid grid-2"></div>
+    </section>
+
+    <section class="section">
+      <div class="panel">
+        <div class="eyebrow">Video demonstrations</div>
+        <h2 style="margin-top:5px">Useful visual references</h2>
+        <div class="grid grid-2" style="margin-top:14px">
+          <div><div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/M91D3iqdlnU" title="Ankle strengthening and balance demonstration" loading="lazy" allowfullscreen></iframe></div><p class="field-help">Sports Injury Physio — strengthening and balance exercise demonstrations.</p></div>
+          <div><div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/yv0AsPOp_Hg" title="Ankle return to sport hopping drills" loading="lazy" allowfullscreen></iframe></div><p class="field-help">Physio REHAB — return-to-sport hopping drill examples.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="report" class="section">
+      <div class="section-head"><div><div class="eyebrow">3 · Review</div><h2>ChatGPT progress report</h2><p>Paste this into chat and ask for your next rehab check-in.</p></div></div>
+      <div class="panel">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+          <button id="copyReportBtn" class="btn btn-primary">Copy progress report</button>
+          <button id="downloadBackupBtn" class="btn">Download JSON backup</button>
+        </div>
+        <pre id="reportBox" class="report-box"></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="alert alert-warn">
+        <strong>Safety boundary.</strong> This tracker helps organise progressive rehabilitation; it does not diagnose ligament grade, syndesmotic injury, osteochondral injury or mechanical instability. With combined medial + lateral injury, persistent significant medial pain, pain above the ankle with rotation, recurrent giving-way, locking/catching, marked swelling, numbness/colour change, or inability to tolerate basic hopping this far after injury are reasons to seek in-person assessment when possible.
+      </div>
+    </section>
+
+    <footer class="footer">
+      Framework: pain, ankle impairment, athlete perception, sensorimotor control and sport performance (PAASS), combined with progressive loading and balance/neuromuscular rehabilitation principles. Working symmetry targets in this app are practical rehab guides rather than validated medical clearance thresholds.
+      <br/><br/>
+      References: Smith et al., BJSM 2021, PAASS return-to-sport consensus; Martin et al., JOSPT 2021 ankle stability/movement coordination CPG.
+    </footer>
+  </main>
+
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-head"><div><div class="eyebrow">GitHub sync</div><h2>Repository setup</h2></div><button class="modal-close" data-close-settings>×</button></div>
+      <p class="sub">The deployed GitHub Pages URL normally lets the app infer owner + repository automatically. A write token is only needed on devices that save data (your phone).</p>
+      <form id="settingsForm">
+        <div class="form-grid">
+          <div class="field"><label>GitHub owner</label><input id="repoOwner" autocomplete="off" /></div>
+          <div class="field"><label>Repository</label><input id="repoName" autocomplete="off" /></div>
+          <div class="field"><label>Branch</label><input id="repoBranch" value="main" autocomplete="off" /></div>
+          <div class="field"><label>Data path</label><input id="repoPath" value="data/rehab.json" autocomplete="off" /></div>
+        </div>
+        <div class="field"><label>Fine-grained GitHub token (optional on laptop)</label><input id="repoToken" type="password" autocomplete="off" placeholder="github_pat_…" /><div class="field-help">For writing: grant this repository only → Contents: Read and write. The token is stored only in this browser's localStorage and is never written into the repo.</div></div>
+        <div class="alert alert-warn">Because your repo is public, <strong>rehab data committed to data/rehab.json is publicly readable</strong>. You said you're comfortable with that. Never commit the GitHub token itself.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-accent" type="submit">Save setup</button><button id="clearTokenBtn" class="btn" type="button">Remove token from this device</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="sessionOverlay" class="session-overlay hidden">
+    <div class="session-shell">
+      <div class="session-top"><div><div class="eyebrow">Rehab session</div><h2 id="sessionTitle">Stage B</h2></div><button id="closeSessionBtn" class="btn">Close</button></div>
+      <form id="sessionForm">
+        <div id="sessionExercises"></div>
+        <div class="panel">
+          <h3>Session response</h3>
+          <div class="form-grid" style="margin-top:12px">
+            <div class="field"><label>Overall pain (0–10)</label><input id="sessionPain" type="number" min="0" max="10" value="0" /></div>
+            <div class="field"><label>Stability</label><select id="sessionStability"><option value="stable">Stable</option><option value="unsure">Slightly unsure</option><option value="gave-way">Gave way</option></select></div>
+            <div class="field"><label>Difficulty</label><select id="sessionDifficulty"><option value="easy">Easy</option><option value="right" selected>About right</option><option value="hard">Hard</option></select></div>
+            <div class="field"><label>Confidence (0–10)</label><input id="sessionConfidence" type="number" min="0" max="10" value="7" /></div>
+            <div class="field"><label>Next-day reaction (can update later)</label><select id="sessionNextDay"><option value="unknown">Not known yet</option><option value="normal">Normal / settled</option><option value="mild">Slight stiffness</option><option value="flare">More painful / swollen</option></select></div>
+          </div>
+          <div class="field" style="margin-top:12px"><label>Notes</label><textarea id="sessionNotes" rows="2" placeholder="Anything unusual?"></textarea></div>
+          <button class="btn btn-accent" type="submit" style="margin-top:12px">Save session to GitHub</button>
+          <div id="sessionSaveNote" class="field-help" style="margin-top:8px"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
