@@ -4,11 +4,11 @@ const CONFIG_KEY = 'ankleRehabRepoConfig';
 
 export function inferRepoConfig() {
   const host = location.hostname;
-  if (!host.endsWith('.github.io')) return { owner:'', repo:'', branch:'main', path:'data/rehab.json' };
+  if (!host.endsWith('.github.io')) return { owner:'', repo:'', branch:'main', path:'rehab.json' };
   const owner = host.split('.')[0];
   const first = location.pathname.split('/').filter(Boolean)[0];
   const repo = first || `${owner}.github.io`;
-  return { owner, repo, branch:'main', path:'data/rehab.json' };
+  return { owner, repo, branch:'main', path:'rehab.json' };
 }
 
 export function getRepoConfig() {
@@ -47,7 +47,7 @@ function apiUrl({owner, repo, path}) {
 export async function pullLatest() {
   const config = getRepoConfig();
   if (!config.owner || !config.repo) {
-    const resp = await fetch(`./data/rehab.json?t=${Date.now()}`, {cache:'no-store'});
+    const resp = await fetch(`./rehab.json?t=${Date.now()}`, {cache:'no-store'});
     if (!resp.ok) throw new Error('Repository is not configured yet.');
     const state = await resp.json();
     setLocalState(state);

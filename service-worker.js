@@ -1,5 +1,5 @@
-const CACHE='ankle-rehab-v1';
-const ASSETS=['./','./index.html','./css/app.css','./js/app.js','./js/database.js','./js/rehab-plan.js','./js/charts.js','./js/reports.js','./manifest.json','./assets/icon.svg'];
+const CACHE='ankle-rehab-v2-flat';
+const ASSETS=['./','./index.html','./app.css','./app.js','./database.js','./rehab-plan.js','./charts.js','./reports.js','./manifest.json','./icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{

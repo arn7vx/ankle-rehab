@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#151a22" />
   <meta name="description" content="Criteria-based ankle rehab tracker and return-to-futsal planner." />
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/app.css" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="app.css" />
   <title>Ankle Rehab — Return to Futsal</title>
 </head>
 <body>
@@ -212,10 +212,10 @@
           <div class="field"><label>GitHub owner</label><input id="repoOwner" autocomplete="off" /></div>
           <div class="field"><label>Repository</label><input id="repoName" autocomplete="off" /></div>
           <div class="field"><label>Branch</label><input id="repoBranch" value="main" autocomplete="off" /></div>
-          <div class="field"><label>Data path</label><input id="repoPath" value="data/rehab.json" autocomplete="off" /></div>
+          <div class="field"><label>Data path</label><input id="repoPath" value="rehab.json" autocomplete="off" /></div>
         </div>
         <div class="field"><label>Fine-grained GitHub token (optional on laptop)</label><input id="repoToken" type="password" autocomplete="off" placeholder="github_pat_…" /><div class="field-help">For writing: grant this repository only → Contents: Read and write. The token is stored only in this browser's localStorage and is never written into the repo.</div></div>
-        <div class="alert alert-warn">Because your repo is public, <strong>rehab data committed to data/rehab.json is publicly readable</strong>. You said you're comfortable with that. Never commit the GitHub token itself.</div>
+        <div class="alert alert-warn">Because your repo is public, <strong>rehab data committed to rehab.json is publicly readable</strong>. You said you're comfortable with that. Never commit the GitHub token itself.</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-accent" type="submit">Save setup</button><button id="clearTokenBtn" class="btn" type="button">Remove token from this device</button></div>
       </form>
     </div>
@@ -243,6 +243,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

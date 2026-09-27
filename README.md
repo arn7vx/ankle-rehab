@@ -1,3 +1,9 @@
+# IMPORTANT — flat GitHub upload build
+
+This build intentionally keeps **every deployable file in the repository root**. It matches GitHub's web uploader when files from folders were uploaded without preserving folders. If replacing an earlier build, overwrite the existing root files with these versions.
+
+After GitHub Pages redeploys, do one hard refresh (Ctrl+Shift+R on desktop; on mobile close/reopen or clear this site's cached data) because the previous service worker may have cached the broken paths.
+
 # Ankle Rehab — Return to Futsal
 
 A static, mobile-first GitHub Pages tracker for criteria-based ankle rehabilitation and return to futsal.
@@ -9,7 +15,7 @@ A static, mobile-first GitHub Pages tracker for criteria-based ankle rehabilitat
 - Phone-first session logger with previous exercise results.
 - Progress charts and recent history.
 - One-click **ChatGPT progress report**.
-- Public GitHub repository as the sync/store: `data/rehab.json` is updated through the GitHub Contents API.
+- Public GitHub repository as the sync/store: `rehab.json` is updated through the GitHub Contents API.
 - Installable PWA shell for easier phone access.
 
 ## Deploy in ~3 minutes
@@ -33,10 +39,10 @@ To let the phone save sessions back into this repository:
 3. Under repository permissions, set **Contents → Read and write**. Keep everything else at the minimum/default.
 4. Open the deployed rehab site on your phone.
 5. Tap **Phone write setup**.
-6. Confirm the inferred owner/repo/branch (`main`) and data path (`data/rehab.json`).
+6. Confirm the inferred owner/repo/branch (`main`) and data path (`rehab.json`).
 7. Paste the token and tap **Save setup**.
 
-The token is stored only in that browser's `localStorage`. It is never written into `data/rehab.json` or committed to the repository. Do not use this write setup on a shared device.
+The token is stored only in that browser's `localStorage`. It is never written into `rehab.json` or committed to the repository. Do not use this write setup on a shared device.
 
 ## Everyday workflow
 
@@ -45,7 +51,7 @@ The token is stored only in that browser's `localStorage`. It is never written i
 1. Open the site (optionally **Add to Home Screen**).
 2. Do the current rehab session.
 3. Tap **Save session to GitHub**.
-4. The site commits the updated `data/rehab.json` to the same repository.
+4. The site commits the updated `rehab.json` to the same repository.
 
 ### Laptop
 
@@ -58,7 +64,7 @@ The token is stored only in that browser's `localStorage`. It is never written i
 All rehab data lives in:
 
 ```text
-data/rehab.json
+rehab.json
 ```
 
 Because the repository is public, that file is public too. No GitHub token is ever stored there.
@@ -86,14 +92,14 @@ The included YouTube demonstrations are supporting visual references only; the w
 index.html
 manifest.json
 service-worker.js
-css/app.css
-js/app.js
-js/database.js
-js/rehab-plan.js
-js/charts.js
-js/reports.js
-assets/icon.svg
-data/rehab.json
+app.css
+app.js
+database.js
+rehab-plan.js
+charts.js
+reports.js
+icon.svg
+rehab.json
 ```
 
 No build step, npm install, server, Supabase, or separate data repository is required.

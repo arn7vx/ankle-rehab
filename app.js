@@ -44,7 +44,7 @@ async function persist(message) {
     setSync('local','Saved on this device only — add the GitHub write token on this device to sync.');
     return {synced:false};
   }
-  setSync('pending','Committing data/rehab.json to GitHub…');
+  setSync('pending','Committing rehab.json to GitHub…');
   try {
     await pushState(state,message);
     setSync('synced',`Saved to GitHub · ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`);
@@ -217,12 +217,12 @@ async function saveSession(ev) {
 }
 
 function openSettings() {
-  const c=getRepoConfig(); setVal('repoOwner',c.owner); setVal('repoName',c.repo); setVal('repoBranch',c.branch||'main'); setVal('repoPath',c.path||'data/rehab.json'); setVal('repoToken',getToken()); $('settingsModal').classList.remove('hidden');
+  const c=getRepoConfig(); setVal('repoOwner',c.owner); setVal('repoName',c.repo); setVal('repoBranch',c.branch||'main'); setVal('repoPath',c.path||'rehab.json'); setVal('repoToken',getToken()); $('settingsModal').classList.remove('hidden');
 }
 function closeSettings(){ $('settingsModal').classList.add('hidden'); }
 function saveSettings(ev){
   ev.preventDefault();
-  setRepoConfig({owner:value('repoOwner').trim(),repo:value('repoName').trim(),branch:value('repoBranch').trim()||'main',path:value('repoPath').trim()||'data/rehab.json'});
+  setRepoConfig({owner:value('repoOwner').trim(),repo:value('repoName').trim(),branch:value('repoBranch').trim()||'main',path:value('repoPath').trim()||'rehab.json'});
   setToken(value('repoToken'));
   closeSettings(); setSync('local',getToken()?'Write token configured on this device. Pull latest or save a log to test it.':'Read-only device. Public GitHub data can still be pulled.');
 }
